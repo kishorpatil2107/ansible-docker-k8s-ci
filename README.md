@@ -1,94 +1,165 @@
-# Docker CI + Push to AWS ECR using Ansible
+# 🚀 Ansible + Docker + AWS ECR + EKS CI/CD Project
 
-[![Ansible](https://img.shields.io/badge/Ansible-automation-blue.svg)](https://www.ansible.com/) 
-[![Docker](https://img.shields.io/badge/Docker-container-blue.svg)](https://www.docker.com/) 
-[![AWS ECR](https://img.shields.io/badge/AWS-ECR-orange.svg)](https://aws.amazon.com/ecr/)
+## 📌 Project Overview
+This project demonstrates a **real-world DevOps CI/CD pipeline** using **Ansible, Docker, AWS ECR, EKS, and Terraform**.
 
-Automate building Docker images, configuring AWS CLI, and pushing images to AWS ECR using **Ansible**.
+The pipeline automates:
+- Docker installation
+- Image build and tagging
+- Secure push to AWS ECR
+- Kubernetes deployment on AWS EKS
+- Infrastructure provisioning using Terraform
+- Secure secrets management using Ansible Vault
+
+This project is **interview-ready** and suitable for a **DevOps portfolio**.
+
 ---
 
-## Workflow Diagram
+## 🏗 Architecture
+```
+Developer → GitHub → Ansible CI
+                ↓
+          Docker Image Build
+                ↓
+              AWS ECR
+                ↓
+              AWS EKS
+                ↓
+           LoadBalancer Service
+```
 
-```text
-          ┌─────────────┐
-          │  Source     │
-          │ Docker App  │
-          └─────┬──────┘
-                │
-                ▼
-        ┌───────────────┐
-        │ Ansible CI     │
-        │ Playbooks      │
-        └─────┬─────────┘
-              │
-              ▼
-        ┌───────────────┐
-        │  Docker Image  │
-        │  Build & Tag   │
-        └─────┬─────────┘
-              │
-              ▼
-        ┌───────────────┐
-        │  AWS ECR Repo  │
-        │ Push Image     │
-        └───────────────┘
-Features
+---
 
-Build Docker images from app source.
+## 🛠 Tech Stack
+| Tool | Purpose |
+|----|----|
+| Ansible | Automation & Configuration Management |
+| Docker | Containerization |
+| AWS ECR | Private Container Registry |
+| AWS EKS | Managed Kubernetes |
+| Terraform | Infrastructure as Code |
+| Kubernetes | Container Orchestration |
+| Ansible Vault | Secrets Management |
 
-Automate Docker installation and setup on target host.
+---
 
-Install AWS CLI and configure credentials securely using Ansible Vault.
-
-Log in to AWS ECR, tag, and push images.
-
-Supports Ubuntu EC2 target hosts.
-
-Project Structure
+## 📁 Project Structure
+```
 ansible-docker-k8s-ci/
-│
 ├── ansible/
-│   ├── inventory/dev.ini             # Target hosts
+│   ├── inventory/
 │   ├── playbooks/
-│   │   ├── build_image.yml           # Build Docker image
-│   │   ├── install_docker.yml        # Install Docker
-│   │   ├── docker_postinstall.yml    # Post-install steps
-│   │   ├── push_to_ecr.yml           # Push Docker image to ECR
-│   │   ├── run_container.yml         # Run Docker container
-│   │   └── ci_docker.ecr.yml         # Full CI + ECR push
+│   ├── roles/
+│   │   ├── docker
+│   │   ├── docker_build
+│   │   ├── aws_cli
+│   │   ├── aws_config
+│   │   ├── ecr_push
+│   │   └── eks_deploy
 │   └── ansible.cfg
-│
 ├── docker/
-│   ├── Dockerfile                     # Nginx Dockerfile
-│   └── index.html                     # Sample web page
-│
-├── vault.yml                           # AWS secrets (Ansible Vault)
+│   ├── Dockerfile
+│   └── index.html
+├── k8s/
+│   ├── deployment.yaml
+│   └── service.yaml
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
+├── vault.yml
 └── README.md
-Prerequisites
+```
 
-Ansible installed on control machine.
+---
 
-Target host with Ubuntu and Python installed.
+## 🔐 Security Best Practices
+- AWS credentials stored using **Ansible Vault**
+- IAM roles for EKS nodes to pull images from ECR
+- No hardcoded secrets
+- Least privilege IAM policies
 
-Docker installed on target (playbooks can automate this).
+---
 
-AWS ECR repository created (example: kishor2107-ecrrepo-mumbai).
+## 🔁 CI Pipeline (Build & Push Image)
+```bash
+ansible-playbook \
+-i ansible/inventory/dev.ini \
+ansible/playbooks/site.yml \
+--vault-password-file ~/.vault_pass.txt
+```
 
-AWS credentials stored in vault.yml.
+### CI Steps
+1. Install Docker
+2. Build Docker image
+3. Install AWS CLI
+4. Authenticate to AWS ECR
+5. Push image to ECR
 
-Setup Vault
-ansible-vault create vault.yml
+---
 
+## 🚀 CD Pipeline (Deploy to EKS)
+```bash
+ansible-playbook \
+-i ansible/inventory/dev.ini \
+ansible/playbooks/deploy_eks.yml \
+--vault-password-file ~/.vault_pass.txt
+```
 
-Add your AWS credentials:
+### CD Steps
+1. Update kubeconfig
+2. Deploy Kubernetes manifests
+3. Expose application via LoadBalancer
 
-aws_access_key_id: <YOUR_ACCESS_KEY>
-aws_secret_access_key: <YOUR_SECRET_KEY>
+---
 
+## ☸ Kubernetes Resources
+- **Deployment**: Runs containerized Nginx app
+- **Service**: Exposes app using AWS LoadBalancer
 
-Create a vault password file for automation:
+```bash
+kubectl get pods
+kubectl get svc
+```
 
-echo "123" > ~/.vault_pass.txt
-chmod 600 ~/.vault_pass.txt
+---
 
-<img width="1640" height="850" alt="Screenshot from 2026-01-11 14-47-52" src="https://github.com/user-attachments/assets/79d2ad3b-5824-4b73-9952-8cc2a43e921d" />
+## 🏗 Terraform – EKS Provisioning
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+Terraform provisions:
+- VPC & Subnets
+- EKS Cluster
+- Managed Node Groups
+- IAM Roles & Policies
+
+---
+
+## 🧠 Interview Highlights
+- End-to-end CI/CD automation
+- Secure secrets handling
+- Cloud-native Kubernetes deployment
+- Infrastructure as Code
+- Production DevOps practices
+
+---
+
+## 💡 Real-World Use Case
+- Enterprise CI/CD pipelines
+- Microservices deployment
+- Kubernetes production setup
+- Cloud DevOps automation
+
+---
+
+## 📌 Author
+**Kishor Patil**  
+DevOps Engineer | AWS | Kubernetes | Terraform | Ansible
+
+---
+
+⭐ If you found this project useful, give it a star on GitHub!
