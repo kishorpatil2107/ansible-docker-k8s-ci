@@ -1,0 +1,17 @@
+- name: Login to ECR
+  shell: |
+    aws ecr get-login-password --region {{ aws_region }} | \
+    docker login --username AWS --password-stdin \
+    {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com
+  args:
+    executable: /bin/bash
+
+- name: Tag Docker image
+  command: >
+    docker tag {{ local_image_name }}:{{ local_image_tag }}
+    {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo }}:{{ local_image_tag }}
+
+- name: Push image to ECR
+  command: >
+    docker push {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo }}:{{ local_image_tag }}
+

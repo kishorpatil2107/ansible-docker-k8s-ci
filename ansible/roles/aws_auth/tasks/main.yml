@@ -1,0 +1,24 @@
+- name: Create AWS directory
+  file:
+    path: /home/ubuntu/.aws
+    state: directory
+    owner: ubuntu
+    mode: '0700'
+
+- name: AWS credentials
+  copy:
+    dest: /home/ubuntu/.aws/credentials
+    content: |
+      [default]
+      aws_access_key_id={{ aws_access_key_id }}
+      aws_secret_access_key={{ aws_secret_access_key }}
+    owner: ubuntu
+    mode: '0600'
+
+- name: AWS config
+  copy:
+    dest: /home/ubuntu/.aws/config
+    content: |
+      [default]
+      region={{ aws_region }}
+

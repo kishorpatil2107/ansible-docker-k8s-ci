@@ -1,0 +1,4 @@
+docker_app_dir: /home/ubuntu/docker-app
+local_image_name: kishor-nginx
+local_image_tag: v1
+

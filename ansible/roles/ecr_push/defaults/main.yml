@@ -1,0 +1,6 @@
+aws_region: ap-south-1
+aws_account_id: "725889403091"
+ecr_repo: kishor2107-ecrrepo-mumbai
+local_image_name: kishor-nginx
+local_image_tag: v1
+
