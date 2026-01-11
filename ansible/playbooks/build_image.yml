@@ -1,0 +1,25 @@
+---
+- name: Build Docker image on target
+  hosts: docker_hosts
+  become: yes
+
+  tasks:
+    - name: Create app directory
+      file:
+        path: /home/ubuntu/docker-app
+        state: directory
+
+    - name: Copy Docker app files
+      copy:
+        src: ../../docker/
+        dest: /home/ubuntu/docker-app/
+        mode: 0755
+
+    - name: Build Docker image
+      community.docker.docker_image:
+        name: kishor-nginx
+        tag: v1
+        source: build
+        build:
+          path: /home/ubuntu/docker-app
+

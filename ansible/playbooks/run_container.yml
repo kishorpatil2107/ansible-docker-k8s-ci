@@ -1,0 +1,15 @@
+---
+- name: Run Nginx container
+  hosts: docker_hosts
+  become: yes
+
+  tasks:
+    - name: Run container
+      community.docker.docker_container:
+        name: nginx-app
+        image: kishor-nginx:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "80:80"
+

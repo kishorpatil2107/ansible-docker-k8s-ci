@@ -1,0 +1,72 @@
+---
+- name: Install AWS CLI, login to ECR, and push Docker image
+  hosts: docker_hosts
+  become: yes
+  vars:
+    aws_region: "ap-south-1"
+    aws_account_id: "725889403091"       # Replace with your AWS account ID
+    ecr_repo: "kishor2107-ecrrepo-mumbai"
+    local_image_name: "kishor-nginx"
+    local_image_tag: "v1"
+
+  tasks:
+
+    - name: Install unzip (required for AWS CLI)
+      apt:
+        name: unzip
+        state: present
+        update_cache: yes
+
+    - name: Download AWS CLI v2
+      get_url:
+        url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+        dest: "/tmp/awscliv2.zip"
+        mode: '0644'
+
+    - name: Unzip AWS CLI
+      unarchive:
+        src: "/tmp/awscliv2.zip"
+        dest: "/tmp/"
+        remote_src: yes
+
+    - name: Install AWS CLI
+      command: "/tmp/aws/install --update"
+      args:
+        creates: /usr/local/bin/aws
+
+    - name: Configure AWS credentials
+      copy:
+        dest: /home/ubuntu/.aws/credentials
+        content: |
+          [default]
+          aws_access_key_id = {{ aws_access_key_id }}
+          aws_secret_access_key = {{ aws_secret_access_key }}
+        owner: ubuntu
+        group: ubuntu
+        mode: '0600'
+
+    - name: Configure AWS config file
+      copy:
+        dest: /home/ubuntu/.aws/config
+        content: |
+          [default]
+          region = {{ aws_region }}
+          output = json
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Login to AWS ECR
+      command: >
+        aws ecr get-login-password --region {{ aws_region }} |
+        docker login --username AWS --password-stdin {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com
+
+    - name: Tag Docker image for ECR
+      command: >
+        docker tag {{ local_image_name }}:{{ local_image_tag }}
+        {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo }}:{{ local_image_tag }}
+
+    - name: Push Docker image to ECR
+      command: >
+        docker push {{ aws_account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo }}:{{ local_image_tag }}
+
