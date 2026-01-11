@@ -1,0 +1,4 @@
+aws_region: ap-south-1
+eks_cluster_name: dev-eks-cluster
+k8s_manifest_path: ../../k8s
+

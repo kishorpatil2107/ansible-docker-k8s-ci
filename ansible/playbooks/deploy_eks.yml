@@ -3,3 +3,10 @@
   tasks:
     - name: Apply Kubernetes manifests
       command: kubectl apply -f k8s/
+
+        #- name: Deploy application to EKS
+        #  hosts: docker_hosts
+    #  become: false
+    #  roles:
+#    - eks_deploy
+

@@ -1,0 +1,14 @@
+- name: Update kubeconfig for EKS
+  command: >
+    aws eks update-kubeconfig
+    --region {{ aws_region }}
+    --name {{ eks_cluster_name }}
+  environment:
+    AWS_DEFAULT_REGION: "{{ aws_region }}"
+
+- name: Verify EKS connectivity
+  command: kubectl get nodes
+
+- name: Deploy Kubernetes manifests
+  command: kubectl apply -f {{ k8s_manifest_path }}
+
